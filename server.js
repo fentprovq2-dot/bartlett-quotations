@@ -24,7 +24,7 @@ const url   = require("url");
 // ── Carrega la clau API des de .env o variable d'entorn ───────────────────
 function loadEnv() {
   try {
-    const env = fs.readFileSync(path.join(__dirname, ".env"), "utf8");
+    const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
     env.split("\n").forEach(line => {
       const [k, ...v] = line.split("=");
       if (k && v.length) process.env[k.trim()] = v.join("=").trim();
