@@ -3,6 +3,7 @@ const https = require("https");
 const fs    = require("fs");
 const path  = require("path");
 
+// Carrega .env si existeix (desenvolupament local)
 try {
   fs.readFileSync(path.join(__dirname, ".env"), "utf8")
     .split("\n").forEach(line => {
@@ -19,7 +20,8 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
+// HTML incrustat directament — no cal carpeta public/
+const HTML = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
 
 const server = http.createServer((req, res) => {
   const pathname = req.url.split("?")[0];
@@ -30,6 +32,7 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
+  // Proxy → Anthropic
   if (req.method === "POST" && pathname === "/api/claude") {
     let body = "";
     req.on("data", chunk => { body += chunk; });
@@ -46,4 +49,33 @@ const server = http.createServer((req, res) => {
         headers: {
           "Content-Type":      "application/json",
           "Content-Length":    postData.length,
-          "x-api-key":
+          "x-api-key":         API_KEY,
+          "anthropic-version": "2023-06-01",
+        }
+      };
+      const pr = https.request(opts, pres => {
+        let data = "";
+        pres.on("data", c => { data += c; });
+        pres.on("end", () => {
+          res.writeHead(pres.statusCode, { "Content-Type": "application/json" });
+          res.end(data);
+        });
+      });
+      pr.on("error", err => {
+        res.writeHead(502);
+        res.end(JSON.stringify({ error: { message: err.message } }));
+      });
+      pr.write(postData);
+      pr.end();
+    });
+    return;
+  }
+
+  // Serveix index.html per a qualsevol altra ruta GET
+  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+  res.end(HTML);
+});
+
+server.listen(PORT, () => {
+  console.log(`✅  Bartlett disponible a http://localhost:${PORT}`);
+});
