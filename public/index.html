@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Familiar Quotations — John Bartlett, 1905</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cormorant+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sb:#1c1510;--sb-brd:#38291a;--ton:#e8d8b8;--tmut:#96806a;
+  --gold:#b8922a;--gold-lt:#d4aa44;
+  --ink:#1a1410;--ink-soft:#3d2e20;
+  --parch:#f5efe3;--parch-dk:#e8dcc8;--parch-dp:#d4c4a8;
+  --bg:#faf6ee;--red:#8b2e1e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'EB Garamond',Georgia,serif;background:var(--parch);color:var(--ink);overflow:hidden}
+#layout{display:grid;grid-template-columns:280px 1fr;height:100vh}
+
+/* ── SIDEBAR ── */
+#sb{background:var(--sb);border-right:1px solid var(--sb-brd);display:flex;flex-direction:column;overflow:hidden}
+.sbh{padding:22px 18px 16px;border-bottom:1px solid var(--sb-brd);flex-shrink:0}
+.sbh-eye{font-family:'Cormorant SC',serif;font-size:9.5px;letter-spacing:3px;color:var(--gold);margin-bottom:7px;opacity:.65}
+.sbh-t{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--ton);line-height:1.2;margin-bottom:2px}
+.sbh-s{font-size:11.5px;color:var(--tmut);font-style:italic}
+.sbs{padding:10px 12px;border-bottom:1px solid var(--sb-brd);flex-shrink:0}
+.sbs input{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--sb-brd);border-radius:3px;padding:6px 9px;color:var(--ton);font-family:'EB Garamond',serif;font-size:13.5px;outline:none;transition:border-color .2s}
+.sbs input:focus{border-color:var(--gold)}
+.sbs input::placeholder{color:var(--tmut)}
+.sbg{display:flex;flex-wrap:wrap;gap:3px;padding:7px 12px;border-bottom:1px solid var(--sb-brd);flex-shrink:0}
+.gtab{font-family:'Cormorant SC',serif;font-size:9.5px;padding:2px 7px;border:1px solid var(--sb-brd);border-radius:2px;background:transparent;color:var(--tmut);cursor:pointer;letter-spacing:.5px;transition:all .13s}
+.gtab:hover{color:var(--gold-lt);border-color:var(--gold)}
+.gtab.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:600}
+#al{flex:1;overflow-y:auto;padding:4px 0;scrollbar-width:thin;scrollbar-color:#38291a transparent}
+#al::-webkit-scrollbar{width:3px}
+#al::-webkit-scrollbar-thumb{background:var(--sb-brd)}
+.alg{font-family:'Cormorant SC',serif;font-size:8.5px;letter-spacing:2px;color:var(--gold);padding:8px 12px 2px;opacity:.55}
+.ali{padding:5px 12px;cursor:pointer;color:var(--tmut);font-size:12.5px;line-height:1.3;border-left:2px solid transparent;transition:all .12s}
+.ali:hover{color:var(--ton);background:rgba(255,255,255,.04)}
+.ali.on{color:var(--gold-lt);background:rgba(184,146,42,.1);border-left-color:var(--gold)}
+.ali-dt{font-size:9.5px;color:var(--tmut);font-style:italic;margin-left:3px}
+
+/* ── MAIN ── */
+#mn{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+#tb{display:flex;align-items:center;gap:12px;padding:11px 28px;border-bottom:1px solid var(--parch-dp);background:var(--parch);flex-shrink:0}
+#tb input{flex:1;max-width:420px;background:#fff;border:1px solid var(--parch-dp);border-radius:3px;padding:7px 12px;font-family:'EB Garamond',serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s}
+#tb input:focus{border-color:var(--gold)}
+#rc{font-size:11.5px;color:#8a7054;font-style:italic;white-space:nowrap}
+#ct{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d4c4a8 transparent}
+#ct::-webkit-scrollbar{width:5px}
+#ct::-webkit-scrollbar-thumb{background:var(--parch-dp);border-radius:3px}
+
+/* ── WELCOME ── */
+.wlc{padding:50px 36px;text-align:center;max-width:560px;margin:0 auto}
+.wo{font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gold);font-style:italic;opacity:.38;margin-bottom:14px}
+.wt{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;color:var(--ink);margin-bottom:10px}
+.wq{font-size:15.5px;color:#7a6040;line-height:1.8;font-style:italic}
+.wn{margin-top:12px;font-size:12.5px;color:#b09070}
+.ws{display:flex;gap:24px;justify-content:center;margin-top:26px}
+.wsn{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--gold);line-height:1}
+.wsl{font-size:10px;color:#9a8060;font-family:'Cormorant SC',serif;letter-spacing:1px;margin-top:2px}
+
+/* ── AUTHOR CARD ── */
+#ac{padding:26px 30px 20px;border-bottom:1px solid var(--parch-dp);background:var(--parch)}
+.ac-in{display:flex;gap:22px;align-items:flex-start}
+.ac-pt{width:98px;height:120px;flex-shrink:0;border:1px solid var(--parch-dp);border-radius:2px;overflow:hidden;background:var(--parch-dk);display:flex;align-items:center;justify-content:center;position:relative}
+.ac-pt img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:sepia(15%) contrast(1.05) brightness(.97)}
+.ac-pt .ini{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--parch-dp);font-style:italic}
+.ac-nm{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--ink);line-height:1.1;margin-bottom:3px}
+.ac-lf{font-size:12px;color:var(--gold);font-family:'Cormorant SC',serif;letter-spacing:1px;margin-bottom:6px}
+.ac-bi{font-size:13.5px;color:var(--ink-soft);line-height:1.72;max-width:500px}
+.ac-tg{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.ac-wiki{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--gold);font-family:'Cormorant SC',serif;letter-spacing:.5px;text-decoration:none;opacity:.75;transition:opacity .15s}.ac-wiki:hover{opacity:1}
+.ac-t{font-size:10px;padding:2px 8px;border:1px solid var(--parch-dp);border-radius:20px;color:#7a6040;font-family:'Cormorant SC',serif;letter-spacing:.4px;background:#fff}
+
+/* ── QUOTES ── */
+#qs{padding:16px 30px 40px}
+.qh{font-family:'Cormorant SC',serif;font-size:9.5px;letter-spacing:2.5px;color:var(--gold);margin-bottom:14px}
+.qp{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--parch-dk)}
+.qp:last-child{border-bottom:none}
+.qcl{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.ql{font-family:'Cormorant SC',serif;font-size:8.5px;letter-spacing:2px;color:var(--gold);margin-bottom:5px;opacity:.7}
+.qe{font-family:'Cormorant Garamond',serif;font-size:15.5px;font-style:italic;color:var(--ink);line-height:1.68;padding-left:12px;border-left:2px solid rgba(184,146,42,.3)}
+.qc{font-family:'EB Garamond',serif;font-size:15px;color:var(--ink-soft);line-height:1.72;padding-left:12px;border-left:2px solid var(--parch-dp);min-height:24px}
+.qc.ld{opacity:.4;font-style:italic}
+.qsr{margin-top:5px;font-size:10.5px;color:#9a8060;font-style:italic}
+.ls{padding:34px;text-align:center;color:#9a8060;font-style:italic;font-size:15px}
+.err{margin:10px 30px;background:#fdf0ee;border:1px solid #e8c8c0;border-radius:3px;padding:8px 12px;font-size:12.5px;color:var(--red)}
+.sra{font-family:'Cormorant SC',serif;font-size:9px;letter-spacing:1.5px;color:var(--gold);margin-bottom:2px;cursor:pointer}
+mark{background:rgba(184,146,42,.22);border-radius:1px;padding:0 1px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp{display:inline-block;width:9px;height:9px;border:1.5px solid var(--parch-dp);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite;vertical-align:middle;margin-right:4px}
+.sp-s{width:7px;height:7px;border-width:1.5px;margin-right:2px}
+</style>
+</head>
+<body>
+<div id="layout">
+  <aside id="sb">
+    <div class="sbh">
+      <div class="sbh-eye">Project Gutenberg · 1905</div>
+      <div class="sbh-t">Familiar<br>Quotations</div>
+      <div class="sbh-s">John Bartlett · Novena edició</div>
+    </div>
+    <div class="sbs"><input id="sbi" placeholder="Cerca autor…" autocomplete="off"></div>
+    <div class="sbg" id="sbg"></div>
+    <div id="al"></div>
+  </aside>
+  <main id="mn">
+    <div id="tb">
+      <input id="msi" placeholder="Cerca cites en tot el recull…">
+      <span id="rc"></span>
+    </div>
+    <div id="ct">
+      <div class="wlc">
+        <div class="wo">❧</div>
+        <div class="wt">Benvingut al recull de cites de Bartlett</div>
+        <div class="wq">"He recollit un ram de flors d'altres homes, i res més que el fil que les lliga és meu."</div>
+        <div class="wn">Selecciona un autor al panell esquerre o cerca cites. Cada fitxa inclou retrat, biografia i traduccions al català.</div>
+        <div class="ws">
+          <div><div class="wsn">100+</div><div class="wsl">Autors</div></div>
+          <div><div class="wsn">IX</div><div class="wsl">Edició</div></div>
+          <div><div class="wsn">1905</div><div class="wsl">Any</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ── Fotos de Wikimedia Commons (domini públic, URL directe) ───────────────
+// Les imatges `<img src="...">` no tenen restriccions CORS.
+const PHOTOS = {
+  WILLIAM_SHAKESPEARE: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/240px-Shakespeare.jpg",
+  FRANCIS_BACON:       "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Francis_Bacon%2C_Viscount_St_Alban_from_NPG_%282%29.jpg/240px-Francis_Bacon%2C_Viscount_St_Alban_from_NPG_%282%29.jpg",
+  DANTE:               "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Dante_Alighieri_by_Andrea_del_Castagno_c._1450.jpg/240px-Dante_Alighieri_by_Andrea_del_Castagno_c._1450.jpg",
+  JOHN_MILTON:         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/John_Milton_by_Pieter_van_der_Plaes_1670.jpg/240px-John_Milton_by_Pieter_van_der_Plaes_1670.jpg",
+  LORD_BYRON:          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Lord_Byron_coloured_drawing.png/240px-Lord_Byron_coloured_drawing.png",
+  JOHN_KEATS:          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/John_Keats_by_William_Hilton.jpg/240px-John_Keats_by_William_Hilton.jpg",
+  SAMUEL_TAYLOR_COLERIDGE: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Samuel_Taylor_Coleridge_by_Washington_Allston.jpg/240px-Samuel_Taylor_Coleridge_by_Washington_Allston.jpg",
+  ALFRED_LORD_TENNYSON:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Alfred_Tennyson%2C_1st_Baron_Tennyson_by_George_Frederic_Watts.jpg/240px-Alfred_Tennyson%2C_1st_Baron_Tennyson_by_George_Frederic_Watts.jpg",
+  ROBERT_BROWNING:     "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Robert_Browning_by_Michele_Gordigiani_1858.jpg/240px-Robert_Browning_by_Michele_Gordigiani_1858.jpg",
+  RALPH_WALDO_EMERSON: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Ralph_Waldo_Emerson_ca1857_retouched.jpg/240px-Ralph_Waldo_Emerson_ca1857_retouched.jpg",
+  ABRAHAM_LINCOLN:     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/240px-Abraham_Lincoln_O-77_matte_collodion_print.jpg",
+  THOMAS_JEFFERSON:    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Thomas_Jefferson_by_Rembrandt_Peale_1800.jpg/240px-Thomas_Jefferson_by_Rembrandt_Peale_1800.jpg",
+  ROBERT_BURNS:        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Robert_burns.jpg/240px-Robert_burns.jpg",
+  WILLIAM_BLAKE:       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/William_Blake_by_Thomas_Phillips.jpg/240px-William_Blake_by_Thomas_Phillips.jpg",
+  WILLIAM_WORDSWORTH:  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/William_Wordsworth_at_28_by_William_Shuter2.jpg/240px-William_Wordsworth_at_28_by_William_Shuter2.jpg",
+  CHARLES_DICKENS:     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Dickens_Gurney_head.jpg/240px-Dickens_Gurney_head.jpg",
+  BENJAMIN_FRANKLIN:   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Joseph_Siffred_Duplessis_-_Benjamin_Franklin_-_Google_Art_Project.jpg/240px-Joseph_Siffred_Duplessis_-_Benjamin_Franklin_-_Google_Art_Project.jpg",
+  MIGUEL_DE_CERVANTES: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Cervantes_J%C3%A1uregui.jpg/240px-Cervantes_J%C3%A1uregui.jpg",
+  AESCHYLUS:           "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Aeschylus_Pinacoteca_Nazionale_di_Ferrara.jpg/240px-Aeschylus_Pinacoteca_Nazionale_di_Ferrara.jpg",
+  CICERO:              "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Cicero_-_Musei_Capitolini.JPG/240px-Cicero_-_Musei_Capitolini.JPG",
+  SIR_WALTER_SCOTT:    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Sir_Henry_Raeburn_-_Sir_Walter_Scott%2C_1st_Baronet_-_Google_Art_Project.jpg/240px-Sir_Henry_Raeburn_-_Sir_Walter_Scott%2C_1st_Baronet_-_Google_Art_Project.jpg",
+  MATTHEW_ARNOLD:      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Matthew_Arnold_by_Elliott_%26_Fry%2C_1883.jpg/240px-Matthew_Arnold_by_Elliott_%26_Fry%2C_1883.jpg",
+  THOMAS_CARLYLE:      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Thomas_Carlyle_lm.jpg/240px-Thomas_Carlyle_lm.jpg",
+  ELIZABETH_BARRETT_BROWNING:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Elizabeth_Barrett_Browning%2C_portrait.jpg/240px-Elizabeth_Barrett_Browning%2C_portrait.jpg",
+  EDGAR_A_POE:         "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Edgar_Allan_Poe_daguerreotype_crop.png/240px-Edgar_Allan_Poe_daguerreotype_crop.png",
+  SAMUEL_JOHNSON:      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Samuel_Johnson_by_Joshua_Reynolds.jpg/240px-Samuel_Johnson_by_Joshua_Reynolds.jpg",
+  ALEXANDER_POPE:      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Alexander_Pope_by_Michael_Dahl.jpg/240px-Alexander_Pope_by_Michael_Dahl.jpg",
+  GOETHE:              "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Goethe_%28Stieler_1828%29.jpg/240px-Goethe_%28Stieler_1828%29.jpg",
+  VOLTAIRE:            "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Atelier_de_Nicolas_de_Largilli%C3%A8re%2C_portrait_de_Voltaire_%28mus%C3%A9e_Carnavalet%29_-002.jpg/240px-Atelier_de_Nicolas_de_Largilli%C3%A8re%2C_portrait_de_Voltaire_%28mus%C3%A9e_Carnavalet%29_-002.jpg",
+  MARCUS_AURELIUS:     "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/MSR-ra-61-b-1-DM.jpg/240px-MSR-ra-61-b-1-DM.jpg",
+  JEAN_JACQUES_ROUSSEAU:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Jean-Jacques_Rousseau_%28painted_portrait%29.jpg/240px-Jean-Jacques_Rousseau_%28painted_portrait%29.jpg",
+  BLAISE_PASCAL:       "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Blaise_Pascal_Versailles.JPG/240px-Blaise_Pascal_Versailles.JPG",
+  GEORGE_WASHINGTON:   "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg/240px-Gilbert_Stuart_Williamstown_Portrait_of_George_Washington.jpg",
+  OMAR_KHAYYAM:        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Omar_Kayyam_1.jpg/240px-Omar_Kayyam_1.jpg",
+  ISAAC_NEWTON:        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/240px-GodfreyKneller-IsaacNewton-1689.jpg",
+  HOMER:               "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Homer_British_Museum.jpg/240px-Homer_British_Museum.jpg",
+  JOHN_ADAMS:          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Gilbert_Stuart%2C_John_Adams%2C_c._1800-1815%2C_NGA_42933.jpg/240px-Gilbert_Stuart%2C_John_Adams%2C_c._1800-1815%2C_NGA_42933.jpg",
+  THOMAS_GRAY:         "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Thomas_Gray_by_John_Giles_Eccardt.jpg/240px-Thomas_Gray_by_John_Giles_Eccardt.jpg",
+  JOHN_DRYDEN:         "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/John_Dryden_by_James_Maubert.jpg/240px-John_Dryden_by_James_Maubert.jpg",
+  THOMAS_HOBBES:       "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Thomas_Hobbes_%28portrait%29.jpg/240px-Thomas_Hobbes_%28portrait%29.jpg",
+  EDMUND_BURKE:        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Edmund_Burke_by_Sir_Joshua_Reynolds.jpg/240px-Edmund_Burke_by_Sir_Joshua_Reynolds.jpg",
+  JOSEPH_ADDISON:      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Joseph_Addison_by_Sir_Godfrey_Kneller%2C_Bt.jpg/240px-Joseph_Addison_by_Sir_Godfrey_Kneller%2C_Bt.jpg",
+  ALEXANDER_POPE_IMG:  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Alexander_Pope_by_Michael_Dahl.jpg/240px-Alexander_Pope_by_Michael_Dahl.jpg",
+  PERCY_BYSSHE_SHELLEY:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Percy_Bysshe_Shelley_by_Alfred_Clint.jpg/240px-Percy_Bysshe_Shelley_by_Alfred_Clint.jpg",
+  HENRY_W_LONGFELLOW:  "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Henry_Wadsworth_Longfellow_-_Brady-Handy.jpg/240px-Henry_Wadsworth_Longfellow_-_Brady-Handy.jpg",
+  DAVID_HUME:          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Painting_of_David_Hume.jpg/240px-Painting_of_David_Hume.jpg",
+  THOMAS_JEFFERSON_IMG:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Thomas_Jefferson_by_Rembrandt_Peale_1800.jpg/240px-Thomas_Jefferson_by_Rembrandt_Peale_1800.jpg",
+  GEORGE_HERBERT:      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/George_Herbert_-_The_Temple_%281674%29_frontispiece.jpg/240px-George_Herbert_-_The_Temple_%281674%29_frontispiece.jpg",
+};
+
+// ── Autors ────────────────────────────────────────────────────────────────
+const AUTHORS = [
+  {id:"JOHN_ADAMS",name:"Adams, John",d:"John Adams",born:1735,died:1826,nat:"American",era:"Politics",wp:"John_Adams"},
+  {id:"JOHN_QUINCY_ADAMS",name:"Adams, John Quincy",d:"John Quincy Adams",born:1767,died:1848,nat:"American",era:"Politics",wp:"John_Quincy_Adams"},
+  {id:"SARAH_FLOWER_ADAMS",name:"Adams, Sarah Flower",d:"Sarah Flower Adams",born:1805,died:1848,nat:"English",era:"Victorian",wp:"Sarah_Flower_Adams"},
+  {id:"JOSEPH_ADDISON",name:"Addison, Joseph",d:"Joseph Addison",born:1672,died:1719,nat:"English",era:"Augustan",wp:"Joseph_Addison"},
+  {id:"AESCHYLUS",name:"Æschylus",d:"Èsquil",born:-525,died:-456,nat:"Greek",era:"Ancient",wp:"Aeschylus"},
+  {id:"MARK_AKENSIDE",name:"Akenside, Mark",d:"Mark Akenside",born:1721,died:1770,nat:"English",era:"Enlightenment",wp:"Mark_Akenside"},
+  {id:"FRANCIS_BACON",name:"Bacon, Francis",d:"Francis Bacon",born:1561,died:1626,nat:"English",era:"Renaissance",wp:"Francis_Bacon"},
+  {id:"JOANNA_BAILLIE",name:"Baillie, Joanna",d:"Joanna Baillie",born:1762,died:1851,nat:"Scottish",era:"Romantic",wp:"Joanna_Baillie"},
+  {id:"BENTHAM",name:"Bentham, Jeremy",d:"Jeremy Bentham",born:1748,died:1832,nat:"English",era:"Enlightenment",wp:"Jeremy_Bentham"},
+  {id:"SIR_WILLIAM_BLACKSTONE",name:"Blackstone, Sir William",d:"Sir William Blackstone",born:1723,died:1780,nat:"English",era:"Enlightenment",wp:"William_Blackstone"},
+  {id:"WILLIAM_BLAKE",name:"Blake, William",d:"William Blake",born:1757,died:1827,nat:"English",era:"Romantic",wp:"William_Blake"},
+  {id:"JOHN_BUNYAN",name:"Bunyan, John",d:"John Bunyan",born:1628,died:1688,nat:"English",era:"Restoration",wp:"John_Bunyan"},
+  {id:"EDMUND_BURKE",name:"Burke, Edmund",d:"Edmund Burke",born:1729,died:1797,nat:"Irish",era:"Enlightenment",wp:"Edmund_Burke"},
+  {id:"ROBERT_BURNS",name:"Burns, Robert",d:"Robert Burns",born:1759,died:1796,nat:"Scottish",era:"Romantic",wp:"Robert_Burns"},
+  {id:"SAMUEL_BUTLER",name:"Butler, Samuel",d:"Samuel Butler",born:1612,died:1680,nat:"English",era:"Restoration",wp:"Samuel_Butler_(poet)"},
+  {id:"LORD_BYRON",name:"Byron, Lord",d:"Lord Byron",born:1788,died:1824,nat:"English",era:"Romantic",wp:"Lord_Byron"},
+  {id:"THOMAS_CAMPBELL",name:"Campbell, Thomas",d:"Thomas Campbell",born:1777,died:1844,nat:"Scottish",era:"Romantic",wp:"Thomas_Campbell_(poet)"},
+  {id:"THOMAS_CARLYLE",name:"Carlyle, Thomas",d:"Thomas Carlyle",born:1795,died:1881,nat:"Scottish",era:"Victorian",wp:"Thomas_Carlyle"},
+  {id:"MIGUEL_DE_CERVANTES",name:"Cervantes",d:"Miguel de Cervantes",born:1547,died:1616,nat:"Spanish",era:"Renaissance",wp:"Miguel_de_Cervantes"},
+  {id:"GEOFFREY_CHAUCER",name:"Chaucer, Geoffrey",d:"Geoffrey Chaucer",born:1343,died:1400,nat:"English",era:"Medieval",wp:"Geoffrey_Chaucer"},
+  {id:"EARL_OF_CHESTERFIELD",name:"Chesterfield, Earl of",d:"Lord Chesterfield",born:1694,died:1773,nat:"English",era:"Enlightenment",wp:"Philip_Stanhope,_4th_Earl_of_Chesterfield"},
+  {id:"CICERO",name:"Cicero",d:"Marc Tul·li Ciceró",born:-106,died:-43,nat:"Roman",era:"Ancient",wp:"Cicero"},
+  {id:"SAMUEL_TAYLOR_COLERIDGE",name:"Coleridge, S. Taylor",d:"S. T. Coleridge",born:1772,died:1834,nat:"English",era:"Romantic",wp:"Samuel_Taylor_Coleridge"},
+  {id:"WILLIAM_CONGREVE",name:"Congreve, William",d:"William Congreve",born:1670,died:1729,nat:"English",era:"Augustan",wp:"William_Congreve"},
+  {id:"WILLIAM_COWPER",name:"Cowper, William",d:"William Cowper",born:1731,died:1800,nat:"English",era:"Pre-Romantic",wp:"William_Cowper"},
+  {id:"DANTE",name:"Dante",d:"Dante Alighieri",born:1265,died:1321,nat:"Italian",era:"Medieval",wp:"Dante_Alighieri"},
+  {id:"CHARLES_DARWIN",name:"Darwin, Charles",d:"Charles Darwin",born:1809,died:1882,nat:"English",era:"Victorian",wp:"Charles_Darwin"},
+  {id:"DANIEL_DEFOE",name:"Defoe, Daniel",d:"Daniel Defoe",born:1660,died:1731,nat:"English",era:"Augustan",wp:"Daniel_Defoe"},
+  {id:"DEMOSTHENES",name:"Demosthenes",d:"Demòstenes",born:-384,died:-322,nat:"Greek",era:"Ancient",wp:"Demosthenes"},
+  {id:"CHARLES_DICKENS",name:"Dickens, Charles",d:"Charles Dickens",born:1812,died:1870,nat:"English",era:"Victorian",wp:"Charles_Dickens"},
+  {id:"BENJAMIN_DISRAELI",name:"Disraeli, Benjamin",d:"Benjamin Disraeli",born:1804,died:1881,nat:"English",era:"Victorian",wp:"Benjamin_Disraeli"},
+  {id:"DR_JOHN_DONNE",name:"Donne, John",d:"John Donne",born:1572,died:1631,nat:"English",era:"Renaissance",wp:"John_Donne"},
+  {id:"JOHN_DRYDEN",name:"Dryden, John",d:"John Dryden",born:1631,died:1700,nat:"English",era:"Restoration",wp:"John_Dryden"},
+  {id:"RALPH_WALDO_EMERSON",name:"Emerson, Ralph Waldo",d:"Ralph Waldo Emerson",born:1803,died:1882,nat:"American",era:"Transcendentalist",wp:"Ralph_Waldo_Emerson"},
+  {id:"EPICTETUS",name:"Epictetus",d:"Epictetus",born:50,died:135,nat:"Greek",era:"Ancient",wp:"Epictetus"},
+  {id:"EURIPIDES",name:"Euripides",d:"Eurípides",born:-480,died:-406,nat:"Greek",era:"Ancient",wp:"Euripides"},
+  {id:"BENJAMIN_FRANKLIN",name:"Franklin, Benjamin",d:"Benjamin Franklin",born:1706,died:1790,nat:"American",era:"Enlightenment",wp:"Benjamin_Franklin"},
+  {id:"THOMAS_FULLER",name:"Fuller, Thomas",d:"Thomas Fuller",born:1608,died:1661,nat:"English",era:"Renaissance",wp:"Thomas_Fuller"},
+  {id:"JOHN_GAY",name:"Gay, John",d:"John Gay",born:1685,died:1732,nat:"English",era:"Augustan",wp:"John_Gay"},
+  {id:"EDWARD_GIBBON",name:"Gibbon, Edward",d:"Edward Gibbon",born:1737,died:1794,nat:"English",era:"Enlightenment",wp:"Edward_Gibbon"},
+  {id:"GOETHE",name:"Goethe, Wolfgang von",d:"Johann W. von Goethe",born:1749,died:1832,nat:"German",era:"Romantic",wp:"Johann_Wolfgang_von_Goethe"},
+  {id:"OLIVER_GOLDSMITH",name:"Goldsmith, Oliver",d:"Oliver Goldsmith",born:1728,died:1774,nat:"Irish",era:"Enlightenment",wp:"Oliver_Goldsmith"},
+  {id:"THOMAS_GRAY",name:"Gray, Thomas",d:"Thomas Gray",born:1716,died:1771,nat:"English",era:"Enlightenment",wp:"Thomas_Gray"},
+  {id:"GEORGE_HERBERT",name:"Herbert, George",d:"George Herbert",born:1593,died:1633,nat:"English",era:"Renaissance",wp:"George_Herbert"},
+  {id:"HIPPOCRATES",name:"Hippocrates",d:"Hipòcrates",born:-460,died:-370,nat:"Greek",era:"Ancient",wp:"Hippocrates"},
+  {id:"THOMAS_HOBBES",name:"Hobbes, Thomas",d:"Thomas Hobbes",born:1588,died:1679,nat:"English",era:"Renaissance",wp:"Thomas_Hobbes"},
+  {id:"OLIVER_WENDELL_HOLMES",name:"Holmes, Oliver Wendell",d:"Oliver Wendell Holmes",born:1809,died:1894,nat:"American",era:"Victorian",wp:"Oliver_Wendell_Holmes_Sr."},
+  {id:"HORACE",name:"Horace",d:"Horaci",born:-65,died:-8,nat:"Roman",era:"Ancient",wp:"Horace"},
+  {id:"DAVID_HUME",name:"Hume, David",d:"David Hume",born:1711,died:1776,nat:"Scottish",era:"Enlightenment",wp:"David_Hume"},
+  {id:"WASHINGTON_IRVING",name:"Irving, Washington",d:"Washington Irving",born:1783,died:1859,nat:"American",era:"Romantic",wp:"Washington_Irving"},
+  {id:"THOMAS_JEFFERSON",name:"Jefferson, Thomas",d:"Thomas Jefferson",born:1743,died:1826,nat:"American",era:"American Founding",wp:"Thomas_Jefferson"},
+  {id:"SAMUEL_JOHNSON",name:"Johnson, Samuel",d:"Samuel Johnson",born:1709,died:1784,nat:"English",era:"Enlightenment",wp:"Samuel_Johnson"},
+  {id:"BEN_JONSON",name:"Jonson, Ben",d:"Ben Jonson",born:1572,died:1637,nat:"English",era:"Renaissance",wp:"Ben_Jonson"},
+  {id:"JUVENAL",name:"Juvenal",d:"Juvenal",born:55,died:130,nat:"Roman",era:"Ancient",wp:"Juvenal"},
+  {id:"JOHN_KEATS",name:"Keats, John",d:"John Keats",born:1795,died:1821,nat:"English",era:"Romantic",wp:"John_Keats"},
+  {id:"THOMAS_A_KEMPIS",name:"Kempis, Thomas à",d:"Tomàs de Kempis",born:1380,died:1471,nat:"German",era:"Medieval",wp:"Thomas_à_Kempis"},
+  {id:"CHARLES_LAMB",name:"Lamb, Charles",d:"Charles Lamb",born:1775,died:1834,nat:"English",era:"Romantic",wp:"Charles_Lamb"},
+  {id:"LA_ROCHEFOUCAULD",name:"La Rochefoucauld",d:"La Rochefoucauld",born:1613,died:1680,nat:"French",era:"Classical",wp:"François_de_La_Rochefoucauld_(moralist)"},
+  {id:"ABRAHAM_LINCOLN",name:"Lincoln, Abraham",d:"Abraham Lincoln",born:1809,died:1865,nat:"American",era:"American",wp:"Abraham_Lincoln"},
+  {id:"HENRY_W_LONGFELLOW",name:"Longfellow, Henry W.",d:"Henry W. Longfellow",born:1807,died:1882,nat:"American",era:"Romantic",wp:"Henry_Wadsworth_Longfellow"},
+  {id:"JAMES_RUSSELL_LOWELL",name:"Lowell, James Russell",d:"James Russell Lowell",born:1819,died:1891,nat:"American",era:"Victorian",wp:"James_Russell_Lowell"},
+  {id:"LUCRETIUS",name:"Lucretius",d:"Lucreci",born:-99,died:-55,nat:"Roman",era:"Ancient",wp:"Lucretius"},
+  {id:"MARTIN_LUTHER",name:"Luther, Martin",d:"Martí Luter",born:1483,died:1546,nat:"German",era:"Renaissance",wp:"Martin_Luther"},
+  {id:"THOMAS_B_MACAULAY",name:"Macaulay, Thomas B.",d:"Thomas B. Macaulay",born:1800,died:1859,nat:"English",era:"Victorian",wp:"Thomas_Babington_Macaulay"},
+  {id:"MARCUS_AURELIUS",name:"Marcus Aurelius",d:"Marc Aureli",born:121,died:180,nat:"Roman",era:"Ancient",wp:"Marcus_Aurelius"},
+  {id:"CHRISTOPHER_MARLOWE",name:"Marlowe, Christopher",d:"Christopher Marlowe",born:1564,died:1593,nat:"English",era:"Renaissance",wp:"Christopher_Marlowe"},
+  {id:"JOHN_MILTON",name:"Milton, John",d:"John Milton",born:1608,died:1674,nat:"English",era:"Renaissance",wp:"John_Milton"},
+  {id:"JEAN_BAPTISTE_MOLIERE",name:"Molière",d:"Molière",born:1622,died:1673,nat:"French",era:"Classical",wp:"Molière"},
+  {id:"MICHAEL_DE_MONTAIGNE",name:"Montaigne",d:"Michel de Montaigne",born:1533,died:1592,nat:"French",era:"Renaissance",wp:"Michel_de_Montaigne"},
+  {id:"ISAAC_NEWTON",name:"Newton, Isaac",d:"Isaac Newton",born:1643,died:1727,nat:"English",era:"Enlightenment",wp:"Isaac_Newton"},
+  {id:"OMAR_KHAYYAM",name:"Omar Khayyám",d:"Omar Khayyam",born:1048,died:1131,nat:"Persian",era:"Medieval",wp:"Omar_Khayyam"},
+  {id:"OVID",name:"Ovid",d:"Ovidi",born:-43,died:18,nat:"Roman",era:"Ancient",wp:"Ovid"},
+  {id:"THOMAS_PAINE",name:"Paine, Thomas",d:"Thomas Paine",born:1737,died:1809,nat:"American",era:"Enlightenment",wp:"Thomas_Paine"},
+  {id:"BLAISE_PASCAL",name:"Pascal",d:"Blaise Pascal",born:1623,died:1662,nat:"French",era:"Renaissance",wp:"Blaise_Pascal"},
+  {id:"EDGAR_A_POE",name:"Poe, Edgar A.",d:"Edgar Allan Poe",born:1809,died:1849,nat:"American",era:"Romantic",wp:"Edgar_Allan_Poe"},
+  {id:"ALEXANDER_POPE",name:"Pope, Alexander",d:"Alexander Pope",born:1688,died:1744,nat:"English",era:"Augustan",wp:"Alexander_Pope"},
+  {id:"PUBLIUS_SYRUS",name:"Publius Syrus",d:"Publilius Syrus",born:-85,died:-43,nat:"Roman",era:"Ancient",wp:"Publilius_Syrus"},
+  {id:"FRANCIS_RABELAIS",name:"Rabelais",d:"François Rabelais",born:1494,died:1553,nat:"French",era:"Renaissance",wp:"François_Rabelais"},
+  {id:"SIR_WALTER_RALEIGH",name:"Raleigh, Sir Walter",d:"Sir Walter Raleigh",born:1554,died:1618,nat:"English",era:"Renaissance",wp:"Walter_Raleigh"},
+  {id:"JEAN_JACQUES_ROUSSEAU",name:"Rousseau",d:"Jean-Jacques Rousseau",born:1712,died:1778,nat:"French",era:"Enlightenment",wp:"Jean-Jacques_Rousseau"},
+  {id:"SAINT_AUGUSTINE",name:"Saint Augustine",d:"Sant Agustí",born:354,died:430,nat:"Berber/Roman",era:"Ancient",wp:"Augustine_of_Hippo"},
+  {id:"WILLIAM_SHAKESPEARE",name:"Shakespeare, William",d:"William Shakespeare",born:1564,died:1616,nat:"English",era:"Renaissance",wp:"William_Shakespeare"},
+  {id:"PERCY_BYSSHE_SHELLEY",name:"Shelley, Percy Bysshe",d:"Percy B. Shelley",born:1792,died:1822,nat:"English",era:"Romantic",wp:"Percy_Bysshe_Shelley"},
+  {id:"SIR_WALTER_SCOTT",name:"Scott, Sir Walter",d:"Sir Walter Scott",born:1771,died:1832,nat:"Scottish",era:"Romantic",wp:"Walter_Scott"},
+  {id:"ALFRED_LORD_TENNYSON",name:"Tennyson, Alfred Lord",d:"Alfred Lord Tennyson",born:1809,died:1892,nat:"English",era:"Victorian",wp:"Alfred,_Lord_Tennyson"},
+  {id:"HENRY_DAVID_THOREAU",name:"Thoreau, Henry David",d:"Henry David Thoreau",born:1817,died:1862,nat:"American",era:"Transcendentalist",wp:"Henry_David_Thoreau"},
+  {id:"VOLTAIRE",name:"Voltaire",d:"Voltaire",born:1694,died:1778,nat:"French",era:"Enlightenment",wp:"Voltaire"},
+  {id:"GEORGE_WASHINGTON",name:"Washington, George",d:"George Washington",born:1732,died:1799,nat:"American",era:"American Founding",wp:"George_Washington"},
+  {id:"WILLIAM_WORDSWORTH",name:"Wordsworth, William",d:"William Wordsworth",born:1770,died:1850,nat:"English",era:"Romantic",wp:"William_Wordsworth"},
+  {id:"ROBERT_BROWNING",name:"Browning, Robert",d:"Robert Browning",born:1812,died:1889,nat:"English",era:"Victorian",wp:"Robert_Browning"},
+  {id:"ELIZABETH_BARRETT_BROWNING",name:"Browning, Elizabeth B.",d:"Elizabeth Barrett Browning",born:1806,died:1861,nat:"English",era:"Victorian",wp:"Elizabeth_Barrett_Browning"},
+  {id:"WILLIAM_CULLEN_BRYANT",name:"Bryant, William Cullen",d:"William Cullen Bryant",born:1794,died:1878,nat:"American",era:"American",wp:"William_Cullen_Bryant"},
+  {id:"MATTHEW_ARNOLD",name:"Arnold, Matthew",d:"Matthew Arnold",born:1822,died:1888,nat:"English",era:"Victorian",wp:"Matthew_Arnold"},
+  {id:"PATRICK_HENRY",name:"Henry, Patrick",d:"Patrick Henry",born:1736,died:1799,nat:"American",era:"American Founding",wp:"Patrick_Henry"},
+  {id:"VIRGIL",name:"Virgil",d:"Virgili",born:-70,died:-19,nat:"Roman",era:"Ancient",wp:"Virgil"},
+  {id:"LEIGH_HUNT",name:"Hunt, Leigh",d:"Leigh Hunt",born:1784,died:1859,nat:"English",era:"Romantic",wp:"Leigh_Hunt"},
+];
+const seen=new Set(); const AA=AUTHORS.filter(a=>{if(seen.has(a.id))return false;seen.add(a.id);return true;});
+const GRPS=["A–D","E–H","I–L","M–P","Q–T","U–Z"];
+function grp(n){const c=n.replace(/^Æ/,"Ae")[0].toUpperCase();if("ABCD".includes(c))return"A–D";if("EFGH".includes(c))return"E–H";if("IJKL".includes(c))return"I–L";if("MNOP".includes(c))return"M–P";if("QRST".includes(c))return"Q–T";return"U–Z";}
+function fy(y){return y<0?Math.abs(y)+" aC":String(y);}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function pj(raw){const s=raw.replace(/```json|```/g,"").trim();try{return JSON.parse(s);}catch(e){}const m=s.match(/[\[{][\s\S]*[\]}]/);if(m)try{return JSON.parse(m[0]);}catch(e){}return null;}
+
+const bioC={}, qC={};
+let CA=null, CG="ALL", SBQ="", MSQ="";
+
+// ── Crida al proxy local (evita exposar la clau API al navegador) ──────────
+async function api(prompt, max) {
+  const r = await fetch("/api/claude", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: max || 900,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content?.[0]?.text?.trim() || "";
+}
+
+function spin(s){return`<span class="sp${s?" sp-s":""}"></span>`;}
+
+function rSB() {
+  document.querySelectorAll(".gtab").forEach(t=>t.classList.toggle("on",t.dataset.g===CG));
+  let list=AA;
+  if(SBQ)list=list.filter(a=>(a.name+" "+a.d).toLowerCase().includes(SBQ));
+  if(CG!=="ALL")list=list.filter(a=>grp(a.name)===CG);
+  list=[...list].sort((a,b)=>a.name.localeCompare(b.name));
+  const el=document.getElementById("al"); el.innerHTML="";
+  if(CG==="ALL"&&!SBQ){
+    const gm={};list.forEach(a=>{const g=grp(a.name);(gm[g]=gm[g]||[]).push(a);});
+    GRPS.forEach(g=>{if(gm[g]){const l=document.createElement("div");l.className="alg";l.textContent=g;el.appendChild(l);gm[g].forEach(a=>el.appendChild(mItem(a)));}});
+  } else list.forEach(a=>el.appendChild(mItem(a)));
+}
+
+function mItem(a) {
+  const d=document.createElement("div"); d.className="ali"+(CA?.id===a.id?" on":"");
+  const dt=(a.born!==undefined&&a.died!==undefined)?`(${fy(a.born)}–${fy(a.died)})`:"";
+  d.innerHTML=`${esc(a.d)} <span class="ali-dt">${dt}</span>`;
+  d.onclick=()=>selA(a); return d;
+}
+
+async function selA(a) {
+  CA=a; MSQ=""; document.getElementById("msi").value="";
+  rSB();
+
+  // Foto: <img src="URL"> no té restriccions CORS — funciona des de qualsevol servidor
+  const photoRaw = PHOTOS[a.id];
+  const photo = photoRaw ? "/img?u=" + encodeURIComponent(photoRaw) : null;
+  const photoHtml = photo
+    ? `<img src="${photo}" alt="${esc(a.d)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : "";
+  const iniHtml = `<span class="ini" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:#d4c4a8;font-style:italic;${photo?"display:none":""}">${a.d[0]}</span>`;
+
+  const dt=(a.born!==undefined&&a.died!==undefined)?`${fy(a.born)} – ${fy(a.died)}`:"";
+  document.getElementById("ct").innerHTML=`
+    <div id="ac">
+      <div class="ac-in">
+        <div class="ac-pt">${photoHtml}${iniHtml}</div>
+        <div style="flex:1;min-width:0">
+          <div class="ac-nm">${esc(a.d)}</div>
+          ${dt?`<div class="ac-lf">${dt}</div>`:""}
+          <div class="ac-bi" id="bio-el">${spin(false)}<em style="font-size:12.5px;color:#9a8060">Carregant fitxa biogràfica…</em></div>
+          <div class="ac-tg">
+            ${a.nat?`<span class="ac-t">${esc(a.nat)}</span>`:""}
+            ${a.era?`<span class="ac-t">${esc(a.era)}</span>`:""}
+          </div>
+          ${a.wp?`<a class="ac-wiki" href="https://ca.wikipedia.org/wiki/${a.wp}" target="_blank" rel="noopener">&#9654; Wikipedia</a>`:""}
+        </div>
+      </div>
+    </div>
+    <div id="qs">
+      <div class="qh">Cites · Anglès i Català</div>
+      <div class="ls">${spin(false)}Cercant cites de ${esc(a.d)}…</div>
+    </div>`;
+  document.getElementById("rc").textContent="";
+  document.getElementById("ct").scrollTop=0;
+
+  // Bio
+  if (!bioC[a.id]) {
+    const dt2=a.born!==undefined?`(${fy(a.born)}–${fy(a.died)})`:"";
+    api(`Escriu una fitxa biogràfica breu (3-4 frases, 70-90 paraules) de ${a.d} ${dt2} en català. To enciclopèdic i literari. Inclou qui és, per què és important i la seva obra o contribució principal. Sense títols ni llistes, text corregut. Català acurat i natural, sense castellanismes.`,250)
+      .then(txt=>{bioC[a.id]=txt;const el=document.getElementById("bio-el");if(el)el.textContent=txt;})
+      .catch(()=>{const el=document.getElementById("bio-el");if(el)el.textContent="";});
+  } else { const el=document.getElementById("bio-el"); if(el)el.textContent=bioC[a.id]; }
+
+  // Cites
+  if (!qC[a.id]) {
+    const dt2=a.born!==undefined?`(${fy(a.born)}–${fy(a.died)})`:"";
+    api(`Ets un expert en "Familiar Quotations" de John Bartlett (1905). Proporciona entre 4 i 8 cites reals i destacades de ${a.d} ${dt2}, preferentment les que apareguin a Bartlett. Respon ÚNICAMENT amb JSON array:\n[{"en":"text anglès","src":"obra/capítol o string buit"},...]`,900)
+      .then(raw=>{
+        let qs=pj(raw);
+        if(!qs||!Array.isArray(qs)){renderQErr("Error en analitzar les cites");return;}
+        qs=qs.filter(q=>q&&q.en).map(q=>({en:q.en,src:q.src||"",ca:""}));
+        qC[a.id]=qs; renderQ(a,qs); transBatch(a,qs);
+      }).catch(e=>renderQErr(e.message));
+  } else renderQ(a,qC[a.id]);
+}
+
+function renderQ(a,qs) {
+  const el=document.getElementById("qs"); if(!el)return;
+  document.getElementById("rc").textContent=qs.length+" cites";
+  if(!qs.length){el.innerHTML='<div class="qh">Cites · Anglès i Català</div><div class="ls">No s\'han trobat cites.</div>';return;}
+  el.innerHTML='<div class="qh">Cites · Anglès i Català</div>'+qs.map((q,i)=>`
+    <div class="qp" style="${i===qs.length-1?'border-bottom:none':''}">
+      <div class="qcl">
+        <div><div class="ql">English</div><div class="qe">${esc(q.en)}</div>${q.src?`<div class="qsr">${esc(q.src)}</div>`:""}</div>
+        <div><div class="ql">Català</div><div class="qc${q.ca?"":" ld"}" id="ca-${a.id}-${i}">${q.ca?esc(q.ca):`${spin(true)} traduint…`}</div></div>
+      </div>
+    </div>`).join("");
+}
+function renderQErr(msg){const el=document.getElementById("qs");if(el)el.innerHTML=`<div class="qh">Cites · Anglès i Català</div><div class="ls" style="color:#8b2e1e">${esc(msg)}</div>`;}
+
+async function transBatch(a,qs) {
+  try {
+    const list=qs.map((q,i)=>`${i+1}. ${q.en}`).join("\n");
+    const raw=await api(
+      `Ets un traductor literari expert en català. Tradueix les cites a un català literari, natural i acurat.\n\n`+
+      `NORMES ESTRICTES:\n`+
+      `- Vocabulari genuïnament català (DIEC/IEC), sense cap calc del castellà ni de l'anglès\n`+
+      `- Per a frases cèlebres, usa la traducció catalana consolidada si n'hi ha\n`+
+      `- "Beware of" → "guarda't de"; "sinews of war" → "el nervi de la guerra"\n`+
+      `- Prioritza el sentit i el to, no la literalitat mecànica\n`+
+      `- Verifica que cada mot existeixi en català normatiu\n\n`+
+      `Cites:\n${list}\n\nRespon ÚNICAMENT amb JSON array:\n["trad. 1","trad. 2",...]`,1000);
+    const tr=pj(raw); if(!tr||!Array.isArray(tr))throw new Error("parse");
+    tr.forEach((t,i)=>{
+      if(typeof t==="string"&&t){
+        if(qC[a.id]?.[i])qC[a.id][i].ca=t;
+        const el=document.getElementById(`ca-${a.id}-${i}`);
+        if(el){el.textContent=t;el.classList.remove("ld");}
+      }
+    });
+  } catch(e){qs.forEach((_,i)=>transOne(a,i));}
+}
+
+async function transOne(a,i) {
+  const q=qC[a.id]?.[i]; if(!q||q.ca)return;
+  try {
+    const t=await api(`Tradueix al català literari i natural (DIEC). Per a frases cèlebres, usa la traducció catalana consolidada. Retorna ÚNICAMENT la traducció.\n\n"${q.en}"`,200);
+    if(qC[a.id]?.[i])qC[a.id][i].ca=t;
+    const el=document.getElementById(`ca-${a.id}-${i}`);
+    if(el){el.textContent=t;el.classList.remove("ld");}
+  }catch(e){}
+}
+
+// Cerca global
+document.getElementById("msi").addEventListener("input",e=>{
+  MSQ=e.target.value.toLowerCase().trim();
+  if(!MSQ){
+    document.getElementById("ct").innerHTML=`<div class="wlc"><div class="wo">❧</div><div class="wt">Benvingut al recull de cites de Bartlett</div><div class="wq">"He recollit un ram de flors d'altres homes, i res més que el fil que les lliga és meu."</div><div class="wn">Selecciona un autor o cerca cites.</div></div>`;
+    document.getElementById("rc").textContent=""; return;
+  }
+  const q=MSQ, res=[];
+  AA.forEach(a=>{(qC[a.id]||[]).forEach((qt,i)=>{if(qt.en.toLowerCase().includes(q)||a.d.toLowerCase().includes(q))res.push({a,qt,i});});});
+  document.getElementById("rc").textContent=res.length?res.length+" resultat"+(res.length!==1?"s":""):"";
+  const re=new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`, "gi");
+  document.getElementById("ct").innerHTML=res.length
+    ? '<div id="qs"><div class="qh">Resultats de cerca</div>'+res.map(({a,qt,i})=>`
+        <div class="qp">
+          <div class="sra" onclick="selA(AA.find(x=>x.id==='${a.id}'))">${esc(a.d)}</div>
+          <div class="qcl">
+            <div><div class="ql">English</div><div class="qe">${esc(qt.en).replace(re,"<mark>$1</mark>")}</div>${qt.src?`<div class="qsr">${esc(qt.src)}</div>`:""}</div>
+            <div><div class="ql">Català</div><div class="qc${qt.ca?"":" ld"}">${qt.ca?esc(qt.ca):`${spin(true)} traduint…`}</div></div>
+          </div>
+        </div>`).join("")+'</div>'
+    : `<div class="ls">Cap cita trobada per "<em>${esc(q)}</em>".<br><small>Selecciona un autor primer per carregar les seves cites.</small></div>`;
+});
+
+// Grups i cerca de sidebar
+["ALL",...GRPS].forEach(g=>{
+  const b=document.createElement("button"); b.className="gtab"; b.dataset.g=g;
+  b.textContent=g==="ALL"?"Tots":g;
+  b.onclick=()=>{CG=g;rSB();};
+  document.getElementById("sbg").appendChild(b);
+});
+document.getElementById("sbi").addEventListener("input",e=>{SBQ=e.target.value.toLowerCase();rSB();});
+rSB();
+</script>
+</body>
+</html>
