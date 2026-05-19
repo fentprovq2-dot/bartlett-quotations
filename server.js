@@ -3,7 +3,6 @@ const https = require("https");
 const fs    = require("fs");
 const path  = require("path");
 
-// Carrega .env si existeix
 try {
   fs.readFileSync(path.join(__dirname, ".env"), "utf8")
     .split("\n").forEach(line => {
@@ -22,36 +21,50 @@ if (!API_KEY) {
 
 const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
 
-// Caché d'imatges en memòria
 const imgCache = {};
 
-function fetchImageFromWikimedia(url) {
+function proxyImage(imgUrl) {
   return new Promise((resolve, reject) => {
-    if (imgCache[url]) return resolve(imgCache[url]);
+    if (imgCache[imgUrl]) return resolve(imgCache[imgUrl]);
+
+    const parsed = new URL(imgUrl);
     const opts = {
-      hostname: "upload.wikimedia.org",
-      path: url.replace("https://upload.wikimedia.org", ""),
+      hostname: parsed.hostname,
+      path: parsed.pathname + (parsed.search || ""),
       headers: {
-        "User-Agent": "BartlettQuotations/1.0 (https://bartlett-quotations.onrender.com; educational use)",
-        "Referer": "https://en.wikipedia.org/"
+        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+        "Referer": "https://en.wikipedia.org/",
+        "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
       }
     };
-    https.get(opts, res => {
-      if (res.statusCode !== 200) return reject(new Error("HTTP " + res.statusCode));
+
+    const req = https.get(opts, res => {
+      // Segueix redireccions
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        return proxyImage(res.headers.location).then(resolve).catch(reject);
+      }
+      if (res.statusCode !== 200) {
+        return reject(new Error("HTTP " + res.statusCode));
+      }
       const chunks = [];
       res.on("data", c => chunks.push(c));
       res.on("end", () => {
         const buf = Buffer.concat(chunks);
         const ct  = res.headers["content-type"] || "image/jpeg";
-        imgCache[url] = { buf, ct };
-        resolve(imgCache[url]);
+        imgCache[imgUrl] = { buf, ct };
+        resolve(imgCache[imgUrl]);
       });
-    }).on("error", reject);
+    });
+    req.on("error", reject);
+    req.setTimeout(10000, () => { req.destroy(); reject(new Error("timeout")); });
   });
 }
 
 const server = http.createServer((req, res) => {
-  const pathname = req.url.split("?")[0];
+  const rawUrl  = req.url;
+  const qmark   = rawUrl.indexOf("?");
+  const pathname = qmark >= 0 ? rawUrl.slice(0, qmark) : rawUrl;
+  const qs      = qmark >= 0 ? new URLSearchParams(rawUrl.slice(qmark + 1)) : new URLSearchParams();
 
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -59,22 +72,22 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-  // Proxy d'imatges de Wikimedia: /img?u=<url-codificada>
+  // Proxy imatges Wikimedia
   if (req.method === "GET" && pathname === "/img") {
-    const qs = new URLSearchParams(req.url.split("?")[1] || "");
     const imgUrl = qs.get("u");
     if (!imgUrl || !imgUrl.startsWith("https://upload.wikimedia.org/")) {
       res.writeHead(400); res.end("URL invàlida"); return;
     }
-    fetchImageFromWikimedia(imgUrl)
+    proxyImage(imgUrl)
       .then(({ buf, ct }) => {
         res.writeHead(200, {
           "Content-Type": ct,
-          "Cache-Control": "public, max-age=86400"
+          "Cache-Control": "public, max-age=604800"
         });
         res.end(buf);
       })
       .catch(err => {
+        console.error("Img error:", imgUrl, err.message);
         res.writeHead(404); res.end("Imatge no trobada: " + err.message);
       });
     return;
