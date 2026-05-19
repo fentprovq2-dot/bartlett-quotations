@@ -20,30 +20,37 @@ if (!API_KEY) {
 }
 
 const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
-
 const imgCache = {};
 
-function proxyImage(imgUrl) {
+function proxyImage(imgUrl, depth) {
+  if (depth > 4) return Promise.reject(new Error("massa redireccions"));
   return new Promise((resolve, reject) => {
     if (imgCache[imgUrl]) return resolve(imgCache[imgUrl]);
-
     const parsed = new URL(imgUrl);
     const opts = {
       hostname: parsed.hostname,
       path: parsed.pathname + (parsed.search || ""),
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
-        "Referer": "https://en.wikipedia.org/",
-        "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Referer":    "https://en.wikipedia.org/wiki/Main_Page",
+        "Accept":     "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "identity",
+        "Connection": "keep-alive",
+        "Sec-Fetch-Dest": "image",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "cross-site",
       }
     };
-
     const req = https.get(opts, res => {
-      // Segueix redireccions
-      if (res.statusCode === 301 || res.statusCode === 302) {
-        return proxyImage(res.headers.location).then(resolve).catch(reject);
+      if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
+        const loc = res.headers.location;
+        const next = loc.startsWith("http") ? loc : `https://${parsed.hostname}${loc}`;
+        res.resume();
+        return proxyImage(next, (depth||0) + 1).then(resolve).catch(reject);
       }
       if (res.statusCode !== 200) {
+        res.resume();
         return reject(new Error("HTTP " + res.statusCode));
       }
       const chunks = [];
@@ -56,44 +63,39 @@ function proxyImage(imgUrl) {
       });
     });
     req.on("error", reject);
-    req.setTimeout(10000, () => { req.destroy(); reject(new Error("timeout")); });
+    req.setTimeout(15000, () => { req.destroy(); reject(new Error("timeout")); });
   });
 }
 
 const server = http.createServer((req, res) => {
-  const rawUrl  = req.url;
-  const qmark   = rawUrl.indexOf("?");
-  const pathname = qmark >= 0 ? rawUrl.slice(0, qmark) : rawUrl;
-  const qs      = qmark >= 0 ? new URLSearchParams(rawUrl.slice(qmark + 1)) : new URLSearchParams();
+  const qmark    = req.url.indexOf("?");
+  const pathname = qmark >= 0 ? req.url.slice(0, qmark) : req.url;
+  const qs       = qmark >= 0 ? new URLSearchParams(req.url.slice(qmark + 1)) : new URLSearchParams();
 
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-  // Proxy imatges Wikimedia
+  // Proxy imatges
   if (req.method === "GET" && pathname === "/img") {
     const imgUrl = qs.get("u");
     if (!imgUrl || !imgUrl.startsWith("https://upload.wikimedia.org/")) {
       res.writeHead(400); res.end("URL invàlida"); return;
     }
-    proxyImage(imgUrl)
+    proxyImage(imgUrl, 0)
       .then(({ buf, ct }) => {
-        res.writeHead(200, {
-          "Content-Type": ct,
-          "Cache-Control": "public, max-age=604800"
-        });
+        res.writeHead(200, { "Content-Type": ct, "Cache-Control": "public, max-age=604800" });
         res.end(buf);
       })
       .catch(err => {
-        console.error("Img error:", imgUrl, err.message);
+        console.error("Img error:", err.message, imgUrl);
         res.writeHead(404); res.end("Imatge no trobada: " + err.message);
       });
     return;
   }
 
-  // Proxy → Anthropic API
+  // Proxy Anthropic
   if (req.method === "POST" && pathname === "/api/claude") {
     let body = "";
     req.on("data", chunk => { body += chunk; });
@@ -101,42 +103,26 @@ const server = http.createServer((req, res) => {
       let payload;
       try { payload = JSON.parse(body); }
       catch(e) { res.writeHead(400); res.end("JSON invàlid"); return; }
-
       const postData = Buffer.from(JSON.stringify(payload));
-      const opts = {
-        hostname: "api.anthropic.com",
-        path:     "/v1/messages",
-        method:   "POST",
+      const pr = https.request({
+        hostname: "api.anthropic.com", path: "/v1/messages", method: "POST",
         headers: {
-          "Content-Type":      "application/json",
-          "Content-Length":    postData.length,
-          "x-api-key":         API_KEY,
-          "anthropic-version": "2023-06-01",
+          "Content-Type": "application/json", "Content-Length": postData.length,
+          "x-api-key": API_KEY, "anthropic-version": "2023-06-01",
         }
-      };
-      const pr = https.request(opts, pres => {
+      }, pres => {
         let data = "";
         pres.on("data", c => { data += c; });
-        pres.on("end", () => {
-          res.writeHead(pres.statusCode, { "Content-Type": "application/json" });
-          res.end(data);
-        });
+        pres.on("end", () => { res.writeHead(pres.statusCode, { "Content-Type": "application/json" }); res.end(data); });
       });
-      pr.on("error", err => {
-        res.writeHead(502);
-        res.end(JSON.stringify({ error: { message: err.message } }));
-      });
-      pr.write(postData);
-      pr.end();
+      pr.on("error", err => { res.writeHead(502); res.end(JSON.stringify({ error: { message: err.message } })); });
+      pr.write(postData); pr.end();
     });
     return;
   }
 
-  // HTML per a qualsevol altra ruta
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
   res.end(HTML);
 });
 
-server.listen(PORT, () => {
-  console.log(`✅  Bartlett disponible a http://localhost:${PORT}`);
-});
+server.listen(PORT, () => console.log(`✅  Bartlett disponible a http://localhost:${PORT}`));
