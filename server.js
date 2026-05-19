@@ -22,32 +22,57 @@ if (!API_KEY) {
 const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
 const imgCache = {};
 
-function proxyImage(imgUrl, depth) {
-  if (depth > 4) return Promise.reject(new Error("massa redireccions"));
+// Wikimedia Special:Redirect és l'endpoint oficial per a imatges externes
+// Format: https://en.wikipedia.org/wiki/Special:Redirect/file/NOM_FITXER?width=250
+function proxyImage(filename, width, depth) {
+  depth = depth || 0;
+  if (depth > 5) return Promise.reject(new Error("massa redireccions"));
+  const key = filename + "@" + width;
+  if (imgCache[key]) return Promise.resolve(imgCache[key]);
+
   return new Promise((resolve, reject) => {
-    if (imgCache[imgUrl]) return resolve(imgCache[imgUrl]);
-    const parsed = new URL(imgUrl);
+    const w = width || 250;
+    const urlPath = "/wiki/Special:Redirect/file/" + encodeURIComponent(filename) + "?width=" + w;
     const opts = {
-      hostname: parsed.hostname,
-      path: parsed.pathname + (parsed.search || ""),
+      hostname: "en.wikipedia.org",
+      path: urlPath,
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Referer":    "https://en.wikipedia.org/wiki/Main_Page",
-        "Accept":     "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "identity",
-        "Connection": "keep-alive",
-        "Sec-Fetch-Dest": "image",
-        "Sec-Fetch-Mode": "no-cors",
-        "Sec-Fetch-Site": "cross-site",
+        "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
       }
     };
+
     const req = https.get(opts, res => {
-      if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
-        const loc = res.headers.location;
-        const next = loc.startsWith("http") ? loc : `https://${parsed.hostname}${loc}`;
+      // Special:Redirect retorna una redirecció cap a la imatge real
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         res.resume();
-        return proxyImage(next, (depth||0) + 1).then(resolve).catch(reject);
+        // Segueix la redirecció cap a upload.wikimedia.org
+        const loc = res.headers.location;
+        const finalUrl = loc.startsWith("http") ? new URL(loc) : new URL("https://en.wikipedia.org" + loc);
+        const finalOpts = {
+          hostname: finalUrl.hostname,
+          path: finalUrl.pathname + finalUrl.search,
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Referer": "https://en.wikipedia.org/",
+            "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+          }
+        };
+        https.get(finalOpts, imgRes => {
+          if (imgRes.statusCode !== 200) {
+            imgRes.resume();
+            return reject(new Error("HTTP " + imgRes.statusCode + " en " + finalUrl.href));
+          }
+          const chunks = [];
+          imgRes.on("data", c => chunks.push(c));
+          imgRes.on("end", () => {
+            const buf = Buffer.concat(chunks);
+            const ct  = imgRes.headers["content-type"] || "image/jpeg";
+            imgCache[key] = { buf, ct };
+            resolve(imgCache[key]);
+          });
+        }).on("error", reject);
+        return;
       }
       if (res.statusCode !== 200) {
         res.resume();
@@ -58,8 +83,8 @@ function proxyImage(imgUrl, depth) {
       res.on("end", () => {
         const buf = Buffer.concat(chunks);
         const ct  = res.headers["content-type"] || "image/jpeg";
-        imgCache[imgUrl] = { buf, ct };
-        resolve(imgCache[imgUrl]);
+        imgCache[key] = { buf, ct };
+        resolve(imgCache[key]);
       });
     });
     req.on("error", reject);
@@ -77,19 +102,18 @@ const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-  // Proxy imatges
+  // Proxy imatges: /img?f=NomFitxer&w=250
   if (req.method === "GET" && pathname === "/img") {
-    const imgUrl = qs.get("u");
-    if (!imgUrl || !imgUrl.startsWith("https://upload.wikimedia.org/")) {
-      res.writeHead(400); res.end("URL invàlida"); return;
-    }
-    proxyImage(imgUrl, 0)
+    const filename = qs.get("f");
+    const width    = parseInt(qs.get("w") || "250", 10);
+    if (!filename) { res.writeHead(400); res.end("Falta el paràmetre f"); return; }
+    proxyImage(filename, width)
       .then(({ buf, ct }) => {
         res.writeHead(200, { "Content-Type": ct, "Cache-Control": "public, max-age=604800" });
         res.end(buf);
       })
       .catch(err => {
-        console.error("Img error:", err.message, imgUrl);
+        console.error("Img error:", filename, err.message);
         res.writeHead(404); res.end("Imatge no trobada: " + err.message);
       });
     return;
