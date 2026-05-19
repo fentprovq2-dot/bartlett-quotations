@@ -2,7 +2,7 @@ services:
   - type: web
     name: bartlett-quotations
     runtime: node
-    buildCommand: ""
+    buildCommand: "echo ok"
     startCommand: node server.js
     envVars:
       - key: ANTHROPIC_API_KEY
