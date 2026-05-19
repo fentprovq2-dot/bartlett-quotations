@@ -1,0 +1,13 @@
+{
+  "name": "bartlett-quotations",
+  "version": "1.0.0",
+  "description": "Familiar Quotations de John Bartlett (1905) — Cercador bilingüe anglès/català",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}
