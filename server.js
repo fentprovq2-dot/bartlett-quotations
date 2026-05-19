@@ -22,74 +22,70 @@ if (!API_KEY) {
 const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
 const imgCache = {};
 
-// Wikimedia Special:Redirect és l'endpoint oficial per a imatges externes
-// Format: https://en.wikipedia.org/wiki/Special:Redirect/file/NOM_FITXER?width=250
-function proxyImage(filename, width, depth) {
-  depth = depth || 0;
-  if (depth > 5) return Promise.reject(new Error("massa redireccions"));
-  const key = filename + "@" + width;
-  if (imgCache[key]) return Promise.resolve(imgCache[key]);
-
+function httpsGet(url, headers) {
   return new Promise((resolve, reject) => {
-    const w = width || 250;
-    const urlPath = "/wiki/Special:Redirect/file/" + encodeURIComponent(filename) + "?width=" + w;
+    const u = new URL(url);
     const opts = {
-      hostname: "en.wikipedia.org",
-      path: urlPath,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
-      }
+      hostname: u.hostname,
+      path: u.pathname + u.search,
+      headers: headers || {}
     };
-
     const req = https.get(opts, res => {
-      // Special:Redirect retorna una redirecció cap a la imatge real
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        res.resume();
-        // Segueix la redirecció cap a upload.wikimedia.org
-        const loc = res.headers.location;
-        const finalUrl = loc.startsWith("http") ? new URL(loc) : new URL("https://en.wikipedia.org" + loc);
-        const finalOpts = {
-          hostname: finalUrl.hostname,
-          path: finalUrl.pathname + finalUrl.search,
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "Referer": "https://en.wikipedia.org/",
-            "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
-          }
-        };
-        https.get(finalOpts, imgRes => {
-          if (imgRes.statusCode !== 200) {
-            imgRes.resume();
-            return reject(new Error("HTTP " + imgRes.statusCode + " en " + finalUrl.href));
-          }
-          const chunks = [];
-          imgRes.on("data", c => chunks.push(c));
-          imgRes.on("end", () => {
-            const buf = Buffer.concat(chunks);
-            const ct  = imgRes.headers["content-type"] || "image/jpeg";
-            imgCache[key] = { buf, ct };
-            resolve(imgCache[key]);
-          });
-        }).on("error", reject);
-        return;
-      }
-      if (res.statusCode !== 200) {
-        res.resume();
-        return reject(new Error("HTTP " + res.statusCode));
-      }
-      const chunks = [];
-      res.on("data", c => chunks.push(c));
-      res.on("end", () => {
-        const buf = Buffer.concat(chunks);
-        const ct  = res.headers["content-type"] || "image/jpeg";
-        imgCache[key] = { buf, ct };
-        resolve(imgCache[key]);
-      });
+      resolve(res);
     });
     req.on("error", reject);
     req.setTimeout(15000, () => { req.destroy(); reject(new Error("timeout")); });
   });
+}
+
+async function proxyImage(filename, width) {
+  const key = filename + "@" + width;
+  if (imgCache[key]) return imgCache[key];
+
+  const hdrs = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+  };
+
+  // Pas 1: demanar Special:Redirect per obtenir la URL real
+  const redirectUrl = "https://en.wikipedia.org/wiki/Special:Redirect/file/" +
+    encodeURIComponent(filename) + "?width=" + (width || 250);
+
+  let res = await httpsGet(redirectUrl, hdrs);
+
+  // Seguir redireccions (pot haver-n'hi diverses)
+  let hops = 0;
+  while ((res.statusCode === 301 || res.statusCode === 302 ||
+          res.statusCode === 303 || res.statusCode === 307 || res.statusCode === 308)
+         && res.headers.location && hops < 5) {
+    res.resume(); // descartar body
+    let loc = res.headers.location;
+    // Correcció: si la redirecció és protocol-relative (//upload...) o relativa
+    if (loc.startsWith("//")) {
+      loc = "https:" + loc;
+    } else if (loc.startsWith("/")) {
+      loc = "https://en.wikipedia.org" + loc;
+    }
+    res = await httpsGet(loc, { ...hdrs, "Referer": "https://en.wikipedia.org/" });
+    hops++;
+  }
+
+  if (res.statusCode !== 200) {
+    res.resume();
+    throw new Error("HTTP " + res.statusCode);
+  }
+
+  const chunks = [];
+  await new Promise((resolve, reject) => {
+    res.on("data", c => chunks.push(c));
+    res.on("end", resolve);
+    res.on("error", reject);
+  });
+
+  const buf = Buffer.concat(chunks);
+  const ct  = res.headers["content-type"] || "image/jpeg";
+  imgCache[key] = { buf, ct };
+  return imgCache[key];
 }
 
 const server = http.createServer((req, res) => {
@@ -102,7 +98,7 @@ const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-  // Proxy imatges: /img?f=NomFitxer&w=250
+  // Proxy imatges
   if (req.method === "GET" && pathname === "/img") {
     const filename = qs.get("f");
     const width    = parseInt(qs.get("w") || "250", 10);
@@ -127,6 +123,10 @@ const server = http.createServer((req, res) => {
       let payload;
       try { payload = JSON.parse(body); }
       catch(e) { res.writeHead(400); res.end("JSON invàlid"); return; }
+
+      // Assegurar model vàlid
+      payload.model = "claude-sonnet-4-5";
+
       const postData = Buffer.from(JSON.stringify(payload));
       const pr = https.request({
         hostname: "api.anthropic.com", path: "/v1/messages", method: "POST",
@@ -137,9 +137,15 @@ const server = http.createServer((req, res) => {
       }, pres => {
         let data = "";
         pres.on("data", c => { data += c; });
-        pres.on("end", () => { res.writeHead(pres.statusCode, { "Content-Type": "application/json" }); res.end(data); });
+        pres.on("end", () => {
+          res.writeHead(pres.statusCode, { "Content-Type": "application/json" });
+          res.end(data);
+        });
       });
-      pr.on("error", err => { res.writeHead(502); res.end(JSON.stringify({ error: { message: err.message } })); });
+      pr.on("error", err => {
+        res.writeHead(502);
+        res.end(JSON.stringify({ error: { message: err.message } }));
+      });
       pr.write(postData); pr.end();
     });
     return;
