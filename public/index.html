@@ -93,9 +93,68 @@ mark{background:rgba(184,146,42,.22);border-radius:1px;padding:0 1px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .sp{display:inline-block;width:9px;height:9px;border:1.5px solid var(--parch-dp);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite;vertical-align:middle;margin-right:4px}
 .sp-s{width:7px;height:7px;border-width:1.5px;margin-right:2px}
+
+/* ── BOTÓ MENÚ MÒBIL ── */
+#mob-btn{display:none;position:fixed;top:12px;left:12px;z-index:200;width:40px;height:40px;background:var(--sb);border:1px solid var(--sb-brd);border-radius:6px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:10px}
+#mob-btn span{display:block;width:18px;height:1.5px;background:var(--ton);transition:all .25s}
+#mob-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+#mob-btn.open span:nth-child(2){opacity:0}
+#mob-btn.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* ── OVERLAY ── */
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:149;opacity:0;transition:opacity .25s}
+#mob-overlay.vis{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  html,body{overflow:auto}
+  #layout{grid-template-columns:1fr;height:auto;min-height:100vh}
+  #mob-btn{display:flex}
+  #mob-overlay{display:block;pointer-events:none}
+  #mob-overlay.vis{pointer-events:all}
+
+  /* Sidebar com a drawer */
+  #sb{position:fixed;top:0;left:0;height:100%;width:82vw;max-width:320px;z-index:150;transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:4px 0 24px rgba(0,0,0,.4)}
+  #sb.open{transform:translateX(0)}
+
+  /* Main ocupa tot */
+  #mn{min-height:100vh}
+  #tb{padding:11px 14px 11px 62px}
+  #tb input{max-width:none;font-size:14px}
+  #ct{overflow-y:visible;height:auto}
+
+  /* Author card apilada */
+  #ac{padding:18px 16px 14px}
+  .ac-in{flex-direction:column;gap:14px}
+  .ac-pt{width:80px;height:96px;flex-shrink:0}
+  .ac-nm{font-size:22px}
+  .ac-bi{font-size:13px}
+
+  /* Cites: columna única */
+  #qs{padding:12px 16px 32px}
+  .qcl{grid-template-columns:1fr;gap:10px}
+  .qe{font-size:15px}
+  .qc{font-size:14.5px}
+
+  /* Welcome */
+  .wlc{padding:32px 20px}
+  .wt{font-size:20px}
+  .wq{font-size:14.5px}
+  .ws{gap:16px}
+  .wsn{font-size:26px}
+
+  /* Tabs grups */
+  .sbg{gap:4px;padding:8px 12px}
+  .gtab{font-size:10px;padding:3px 8px}
+}
+
 </style>
 </head>
 <body>
+<button id="mob-btn" aria-label="Obrir menú d'autors">
+  <span></span><span></span><span></span>
+</button>
+<div id="mob-overlay"></div>
 <div id="layout">
   <aside id="sb">
     <div class="sbh">
@@ -462,6 +521,22 @@ document.getElementById("msi").addEventListener("input",e=>{
 });
 document.getElementById("sbi").addEventListener("input",e=>{SBQ=e.target.value.toLowerCase();rSB();});
 rSB();
+
+// ── Drawer mòbil ──────────────────────────────────────────────────────────
+(function(){
+  const btn = document.getElementById('mob-btn');
+  const sb  = document.getElementById('sb');
+  const ov  = document.getElementById('mob-overlay');
+  function openSB(){sb.classList.add('open');btn.classList.add('open');ov.classList.add('vis');}
+  function closeSB(){sb.classList.remove('open');btn.classList.remove('open');ov.classList.remove('vis');}
+  btn.addEventListener('click', ()=> sb.classList.contains('open') ? closeSB() : openSB());
+  ov.addEventListener('click', closeSB);
+  // Tanca el sidebar en seleccionar un autor (mòbil)
+  document.getElementById('al').addEventListener('click', ()=>{
+    if(window.innerWidth <= 700) closeSB();
+  });
+})();
+
 </script>
 </body>
 </html>
