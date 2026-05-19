@@ -3,7 +3,7 @@ const https = require("https");
 const fs    = require("fs");
 const path  = require("path");
 
-// Carrega .env si existeix (desenvolupament local)
+// Carrega .env si existeix
 try {
   fs.readFileSync(path.join(__dirname, ".env"), "utf8")
     .split("\n").forEach(line => {
@@ -20,8 +20,35 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-// HTML incrustat directament — no cal carpeta public/
-const HTML = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+const HTML = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
+
+// Caché d'imatges en memòria
+const imgCache = {};
+
+function fetchImageFromWikimedia(url) {
+  return new Promise((resolve, reject) => {
+    if (imgCache[url]) return resolve(imgCache[url]);
+    const opts = {
+      hostname: "upload.wikimedia.org",
+      path: url.replace("https://upload.wikimedia.org", ""),
+      headers: {
+        "User-Agent": "BartlettQuotations/1.0 (https://bartlett-quotations.onrender.com; educational use)",
+        "Referer": "https://en.wikipedia.org/"
+      }
+    };
+    https.get(opts, res => {
+      if (res.statusCode !== 200) return reject(new Error("HTTP " + res.statusCode));
+      const chunks = [];
+      res.on("data", c => chunks.push(c));
+      res.on("end", () => {
+        const buf = Buffer.concat(chunks);
+        const ct  = res.headers["content-type"] || "image/jpeg";
+        imgCache[url] = { buf, ct };
+        resolve(imgCache[url]);
+      });
+    }).on("error", reject);
+  });
+}
 
 const server = http.createServer((req, res) => {
   const pathname = req.url.split("?")[0];
@@ -32,7 +59,28 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
-  // Proxy → Anthropic
+  // Proxy d'imatges de Wikimedia: /img?u=<url-codificada>
+  if (req.method === "GET" && pathname === "/img") {
+    const qs = new URLSearchParams(req.url.split("?")[1] || "");
+    const imgUrl = qs.get("u");
+    if (!imgUrl || !imgUrl.startsWith("https://upload.wikimedia.org/")) {
+      res.writeHead(400); res.end("URL invàlida"); return;
+    }
+    fetchImageFromWikimedia(imgUrl)
+      .then(({ buf, ct }) => {
+        res.writeHead(200, {
+          "Content-Type": ct,
+          "Cache-Control": "public, max-age=86400"
+        });
+        res.end(buf);
+      })
+      .catch(err => {
+        res.writeHead(404); res.end("Imatge no trobada: " + err.message);
+      });
+    return;
+  }
+
+  // Proxy → Anthropic API
   if (req.method === "POST" && pathname === "/api/claude") {
     let body = "";
     req.on("data", chunk => { body += chunk; });
@@ -71,7 +119,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Serveix index.html per a qualsevol altra ruta GET
+  // HTML per a qualsevol altra ruta
   res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
   res.end(HTML);
 });

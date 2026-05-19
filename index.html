@@ -334,9 +334,10 @@ async function selA(a) {
   rSB();
 
   // Foto: <img src="URL"> no té restriccions CORS — funciona des de qualsevol servidor
-  const photo = PHOTOS[a.id];
+  const photoRaw = PHOTOS[a.id];
+  const photo = photoRaw ? "/img?u=" + encodeURIComponent(photoRaw) : null;
   const photoHtml = photo
-    ? `<img src="${photo}" alt="${esc(a.d)}" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    ? `<img src="${photo}" alt="${esc(a.d)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : "";
   const iniHtml = `<span class="ini" style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:#d4c4a8;font-style:italic;${photo?"display:none":""}">${a.d[0]}</span>`;
 
